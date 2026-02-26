@@ -21,10 +21,12 @@ Deploys the trained model via Flask web interface
 Users can input 41 network features and receive real-time intrusion predictions.
 
 🧠 Dataset
+
 Dataset Used: NSL-KDD
 The NSL-KDD dataset is an improved version of the KDD Cup 1999 dataset and is widely used in intrusion detection research.
 
 Key Characteristics
+
 41 network traffic features
 Multiple attack categories
 Converted to binary classification:
@@ -33,17 +35,27 @@ Converted to binary classification:
 The difficulty column was removed to avoid data leakage, as it is not available in real-world network traffic.
 
 🛠 Tech Stack
+
 Python
+
 Pandas
+
 NumPy
+
 Scikit-learn
+
 XGBoost
+
 SMOTE (Imbalanced-learn)
+
 Flask
+
 HTML 
 
 ⚙️ Machine Learning Pipeline
+
 1️⃣ Data Preprocessing
+
 Multi-class attacks converted to binary labels
 Categorical features encoded:
 protocol_type
@@ -56,6 +68,7 @@ Important rule followed:
   transform() on test data
 
 2️⃣ Class Imbalance Handling
+
 The dataset contains unequal numbers of normal and attack samples.
 To address this:
 Applied SMOTE (Synthetic Minority Oversampling Technique)
@@ -63,6 +76,7 @@ Balanced the training dataset before model training
 This improves attack detection capability.
 
 3️⃣ Model Used – XGBoost
+
 Why XGBoost?
 Excellent performance on structured/tabular data
 Handles non-linearity
@@ -76,6 +90,7 @@ Applied custom probability threshold (0.25)
 Final accuracy achieved: ~82%
 
 📊 Evaluation Metrics
+
 The model was evaluated using:
 Accuracy
 Precision
@@ -85,11 +100,13 @@ Confusion Matrix
 Most Important Metric in IDS
 
 👉 Recall
+
 Because:
 False Negative = Attack missed
 Missing an attack is more dangerous than a false alarm
 
 🎯 Adaptive Threshold Logic
+
 Instead of using default threshold (0.5), the system uses:
 threshold = 0.25
 Prediction logic:
@@ -98,6 +115,7 @@ Else → NORMAL
 This improves sensitivity to attacks and reduces missed intrusions.
 
 🌐 Deployment – Flask
+
 Application Flow
 User Input
 ↓
@@ -117,6 +135,7 @@ Attack probability (%)
 Clean, user-friendly layout
 
 📂 Project Structure
+
 adaptive_ids/
 │
 ├── app.py
@@ -139,18 +158,23 @@ adaptive_ids/
 └── README.md
 
 ▶️ How to Run the Project
+
 1️⃣ Clone the Repository
 git clone https://github.com/shravani311/Adaptive-Network-Intrusion-Detection-System.git
 cd Adaptive-Network-Intrusion-Detection-System
+
 2️⃣ Install Dependencies
 pip install -r requirements.txt
+
 3️⃣ Train the Model (Optional)
 python train_model.py
+
 4️⃣ Run the Flask Application
 python app.py
 Open in browser
 
 🔥 Key Interview Highlights
+
 Binary classification from multi-class dataset
 Data leakage prevention
 SMOTE-based class balancing
@@ -159,6 +183,7 @@ Probability-based adaptive threshold
 End-to-end ML deployment using Flask
 
 👩‍💻 Author
+Shravani Sakhalkar
 
 Shravani Sakhalkar
 Computer Engineering Undergraduate

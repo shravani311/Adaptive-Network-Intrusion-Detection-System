@@ -183,7 +183,6 @@ Probability-based adaptive threshold
 End-to-end ML deployment using Flask
 
 👩‍💻 Author
-Shravani Sakhalkar
 
 Shravani Sakhalkar
-Computer Engineering Undergraduate
+

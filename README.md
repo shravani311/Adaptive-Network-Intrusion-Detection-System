@@ -1,155 +1,105 @@
 🚀 Adaptive Network Intrusion Detection System (Adaptive-IDS)
+A Machine Learning-based Network Intrusion Detection System (IDS) built using the NSL-KDD dataset, trained with XGBoost, enhanced using SMOTE for class balancing, and deployed using Flask.
 
-A Machine Learning-based Intrusion Detection System (IDS) built using the NSL-KDD dataset, trained with XGBoost, enhanced using SMOTE for class balancing, and deployed using Flask.
-
-This system classifies network traffic as:
-
+The system classifies network traffic as:
 ✅ NORMAL Traffic
-
 🚨 INTRUSION Detected
-
-It also provides attack probability with adaptive threshold detection.
+It also displays the Attack Probability (%) using adaptive threshold logic.
 
 📌 Project Overview
-
-This project implements a supervised ML-based Network Intrusion Detection System that:
-
-Performs data preprocessing
-
+This project implements an end-to-end supervised machine learning pipeline for detecting malicious network activity.
+The system:
+Preprocesses raw network traffic features
 Handles class imbalance using SMOTE
-
 Trains an XGBoost classifier
-
 Uses probability-based adaptive thresholding
+Deploys the trained model via Flask web interface
+Users can input 41 network features and receive real-time intrusion predictions.
 
-Deploys the model via Flask web interface
+🧠 Dataset
+Dataset Used: NSL-KDD
+The NSL-KDD dataset is an improved version of the KDD Cup 1999 dataset and is widely used in intrusion detection research.
 
-The system allows users to input 41 network features and get real-time intrusion predictions.
-
-🧠 Dataset Used
-
-Dataset: NSL-KDD
-
-The NSL-KDD dataset is an improved version of the KDD Cup 1999 dataset and is widely used for intrusion detection research.
-
-Key Features:
-
+Key Characteristics
 41 network traffic features
-
 Multiple attack categories
+Converted to binary classification:
+  0 → Normal
+  1 → Intrusion
+The difficulty column was removed to avoid data leakage, as it is not available in real-world network traffic.
 
-Converted to Binary Classification:
-
-0 → Normal
-
-1 → Intrusion
-
-We removed the difficulty column to prevent data leakage since it is not available in real-world network traffic.
-
-⚙️ Tech Stack
-
+🛠 Tech Stack
 Python
-
 Pandas
-
 NumPy
-
 Scikit-learn
-
 XGBoost
-
 SMOTE (Imbalanced-learn)
-
 Flask
+HTML 
 
-HTML/CSS
-
-🔄 Machine Learning Pipeline
+⚙️ Machine Learning Pipeline
 1️⃣ Data Preprocessing
-
-Label conversion (multi-class → binary)
-
-Encoding categorical features (protocol_type, service, flag)
-
+Multi-class attacks converted to binary labels
+Categorical features encoded:
+protocol_type
+service
+flag
 Feature scaling using StandardScaler
-
-Train-test split
-
-Important:
-
-fit_transform() on training data
-
-transform() on test data
+Proper train-test separation
+Important rule followed:
+  fit_transform() on training data
+  transform() on test data
 
 2️⃣ Class Imbalance Handling
+The dataset contains unequal numbers of normal and attack samples.
+To address this:
+Applied SMOTE (Synthetic Minority Oversampling Technique)
+Balanced the training dataset before model training
+This improves attack detection capability.
 
-Used SMOTE (Synthetic Minority Oversampling Technique) to balance attack and normal samples.
-
-Before SMOTE:
-
-[67343 58630]
-
-After SMOTE:
-
-[67343 67343]
-3️⃣ Model Used: XGBoost
-
+3️⃣ Model Used – XGBoost
 Why XGBoost?
-
+Excellent performance on structured/tabular data
 Handles non-linearity
+Reduces overfitting via boosting
+Provides probability predictions
+Model Tuning
+Increased max_depth
+Increased n_estimators
+Adjusted scale_pos_weight
+Applied custom probability threshold (0.25)
+Final accuracy achieved: ~82%
 
-High performance on structured/tabular data
+📊 Evaluation Metrics
+The model was evaluated using:
+Accuracy
+Precision
+Recall
+F1-Score
+Confusion Matrix
+Most Important Metric in IDS
 
-Robust against overfitting
+👉 Recall
+Because:
+False Negative = Attack missed
+Missing an attack is more dangerous than a false alarm
 
-Supports probability prediction
-
-Model tuned using:
-
-max_depth
-
-n_estimators
-
-scale_pos_weight
-
-Adaptive threshold (0.25)
-
-4️⃣ Evaluation Metrics
-
-Example Output:
-
-Accuracy: 0.82
-
-Precision (Attack): 0.97
-Recall (Attack): 0.71
-F1-score: 0.82
-
-Most important metric in IDS:
-👉 Recall (to reduce False Negatives)
-
-False Negative = Attack missed (dangerous)
-
-🎯 Adaptive Threshold Detection
-
-Instead of using default 0.5 threshold:
-
-prob = model.predict_proba(sample)[0][1]
+🎯 Adaptive Threshold Logic
+Instead of using default threshold (0.5), the system uses:
 threshold = 0.25
+Prediction logic:
+If Attack Probability ≥ 0.25 → INTRUSION
+Else → NORMAL
+This improves sensitivity to attacks and reduces missed intrusions.
 
-If:
-
-prob ≥ 0.25 → INTRUSION
-else → NORMAL
-
-This improves attack sensitivity.
-
-🌐 Deployment (Flask)
-
-Flow:
-
+🌐 Deployment – Flask
+Application Flow
 User Input
 ↓
-Preprocessing (Encoding + Scaling)
+Encoding
+↓
+Scaling
 ↓
 Probability Prediction
 ↓
@@ -157,13 +107,10 @@ Threshold Check
 ↓
 Result Display
 
-The UI provides:
-
+The web interface displays:
 Clear classification result
-
-Attack probability percentage
-
-Clean readable layout
+Attack probability (%)
+Clean, user-friendly layout
 
 📂 Project Structure
 adaptive_ids/
@@ -171,45 +118,43 @@ adaptive_ids/
 ├── app.py
 ├── train_model.py
 ├── preprocess.py
+│
 ├── dataset/
+│   ├── KDDTrain+.txt
+│   └── KDDTest+.txt
+│
 ├── model/
 │   ├── xgb_model.pkl
 │   ├── scaler.pkl
 │   └── encoders.pkl
+│
 ├── templates/
 │   └── index.html
+│
 ├── requirements.txt
 └── README.md
-▶️ How to Run
-1️⃣ Clone Repository
+
+▶️ How to Run the Project
+1️⃣ Clone the Repository
 git clone https://github.com/shravani311/Adaptive-Network-Intrusion-Detection-System.git
 cd Adaptive-Network-Intrusion-Detection-System
 2️⃣ Install Dependencies
 pip install -r requirements.txt
-3️⃣ Train Model (Optional)
+3️⃣ Train the Model (Optional)
 python train_model.py
-4️⃣ Run Flask App
+4️⃣ Run the Flask Application
 python app.py
+Open in browser
 
-Open browser:
-
-http://127.0.0.1:5000/
 🔥 Key Interview Highlights
-
 Binary classification from multi-class dataset
-
 Data leakage prevention
-
 SMOTE-based class balancing
-
 XGBoost ensemble learning
-
 Probability-based adaptive threshold
+End-to-end ML deployment using Flask
 
-End-to-end deployment using Flask
-
-🏆 Author
+👩‍💻 Author
 
 Shravani Sakhalkar
 Computer Engineering Undergraduate
-Machine Learning & Cybersecurity Enthusiast

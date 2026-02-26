@@ -1,13 +1,12 @@
 from flask import Flask, render_template, request
 import pickle
 import pandas as pd
-import numpy as np
 from preprocess import load_data
 
 app = Flask(__name__)
 
-# ---------------- Load trained model, encoders, scaler ----------------
-with open("model/rf_model.pkl", "rb") as f:
+# ---------------- Load trained model ----------------
+with open("model/xgb_model.pkl", "rb") as f:
     model = pickle.load(f)
 
 with open("model/encoders.pkl", "rb") as f:
@@ -16,51 +15,60 @@ with open("model/encoders.pkl", "rb") as f:
 with open("model/scaler.pkl", "rb") as f:
     scaler = pickle.load(f)
 
-# Load training columns to maintain order
+# Load feature column order
 X_train, _ = load_data("dataset/KDDTrain+.txt")
 columns = X_train.columns
 
-# ---------------- Routes ----------------
+
 @app.route("/")
 def home():
     return render_template("index.html")
 
+
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        # Read input
+        # ---------------- Read Input ----------------
         data = request.form["features"]
-        values = data.split(",")
+        values = [v.strip() for v in data.split(",")]
 
+        # ---------------- Feature Count Check ----------------
         if len(values) != len(columns):
             return render_template(
                 "index.html",
-                prediction_text="Error: Number of features mismatch!",
+                prediction_text="Error: Exactly 41 features required (label & difficulty NOT allowed).",
                 confidence="N/A"
             )
 
-        # Convert to DataFrame
+        # ---------------- Create DataFrame ----------------
         sample_df = pd.DataFrame([values], columns=columns)
 
-        # Numeric conversion
+        # ---------------- Convert Numeric Columns ----------------
         for col in sample_df.columns:
             if col not in encoders:
                 sample_df[col] = sample_df[col].astype(float)
 
-        # Encode categorical safely
+        # ---------------- Encode Categorical Columns (SAFE) ----------------
         for col, le in encoders.items():
-            val = sample_df[col][0]
-            if val not in le.classes_:
-                val = le.classes_[0]  # fallback
-            sample_df[col][0] = val
+            value = sample_df[col][0]
+
+            # Strict validation (no silent replacement)
+            if value not in le.classes_:
+                return render_template(
+                    "index.html",
+                    prediction_text=f"Error: Unknown category '{value}' in column '{col}'",
+                    confidence="N/A"
+                )
+
             sample_df[col] = le.transform(sample_df[col])
 
-        # Scale features
+        # ---------------- Scaling ----------------
         sample_scaled = scaler.transform(sample_df)
 
-        # Predict probability
-        prob = model.predict_proba(sample_scaled)[0][1]  # probability for intrusion
-        threshold = 0.60  # calibrated threshold
+        # ---------------- Probability Prediction ----------------
+        prob = model.predict_proba(sample_scaled)[0][1]  # intrusion probability
+
+        threshold = 0.25  # tuned threshold
 
         if prob >= threshold:
             result = "INTRUSION Detected"
@@ -70,7 +78,7 @@ def predict():
         return render_template(
             "index.html",
             prediction_text=result,
-            confidence=round(prob * 100, 2)
+            confidence=f"Attack Probability: {round(prob * 100, 2)}%"
         )
 
     except Exception as e:
@@ -79,6 +87,7 @@ def predict():
             prediction_text=f"Error: {str(e)}",
             confidence="N/A"
         )
+
 
 if __name__ == "__main__":
     app.run(debug=True)

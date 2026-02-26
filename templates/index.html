@@ -3,29 +3,103 @@
 <head>
     <title>Adaptive Network IDS</title>
     <style>
-        body { font-family: Arial; background: #f4f6f8; text-align: center; }
-        .box { background: white; padding: 20px; width: 60%; margin: auto; }
-        input { width: 90%; padding: 10px; }
-        button { padding: 10px 20px; margin-top: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            text-align: center;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 70%;
+            margin: auto;
+            box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+        }
+
+        textarea {
+            width: 95%;
+            height: 100px;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 25px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .normal {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .intrusion {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .probability {
+            font-size: 16px;
+            margin-top: 10px;
+            font-weight: normal;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h2>Adaptive Network Intrusion Detection System</h2>
+    <h1>Adaptive ML-Based Network Intrusion Detection System</h1>
 
-    <form action="/predict" method="post">
-        <p>Enter network features (comma-separated):</p>
-        <input type="text" name="features" required>
-        <br><br>
-        <button type="submit">Predict</button>
-    </form>
+    <div class="container">
 
-    {% if prediction_text %}
-        <h3>Result: {{ prediction_text }}</h3>
-        <h4>Confidence: {{ confidence }}%</h4>
-    {% endif %}
-</div>
+        <form action="/predict" method="post">
+            <p><b>Enter 41 comma-separated network feature values:</b></p>
+            <textarea name="features" placeholder="Paste network traffic features here..."></textarea>
+            <br>
+            <button type="submit">Analyze Traffic</button>
+        </form>
+
+        {% if prediction_text %}
+            <div class="result-box 
+                {% if 'INTRUSION' in prediction_text %}intrusion{% else %}normal{% endif %}">
+                
+                {{ prediction_text }}
+
+                <div class="probability">
+                    {{ confidence }}
+                </div>
+
+            </div>
+        {% endif %}
+
+    </div>
 
 </body>
 </html>

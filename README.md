@@ -1,12 +1,16 @@
 🚀 Adaptive Network Intrusion Detection System (Adaptive-IDS)
+
 A Machine Learning-based Network Intrusion Detection System (IDS) built using the NSL-KDD dataset, trained with XGBoost, enhanced using SMOTE for class balancing, and deployed using Flask.
 
 The system classifies network traffic as:
+
 ✅ NORMAL Traffic
+
 🚨 INTRUSION Detected
 It also displays the Attack Probability (%) using adaptive threshold logic.
 
 📌 Project Overview
+
 This project implements an end-to-end supervised machine learning pipeline for detecting malicious network activity.
 The system:
 Preprocesses raw network traffic features
